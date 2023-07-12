@@ -15,6 +15,11 @@ function App() {
 
   const [passwordLength, setPasswordLength] = useState<number>(12);
 
+  const [includeNumbers, setIncludeNumbers] = useState<boolean>(true);
+  const [includeLowercase, setIncludeLowercase] = useState<boolean>(true);
+  const [includeUppercase, setIncludeUppercase] = useState<boolean>(false);
+  const [includeSpecialChars, setIncludeSpecialChars] = useState<boolean>(false);
+
   const myStyles = {
     iconStyles:{
       cursor:"pointer"
@@ -24,14 +29,14 @@ function App() {
   useEffect(() => {
     handleGenerate();
 
-  }, []);
+  }, [passwordLength]);
 
 const handleGenerate = () : void => {
 
 
   const generatePasswordDto = new GeneratePasswordDto();
 
-    generatePasswordDto.Length = passwordLength+1;
+    generatePasswordDto.Length = passwordLength;
     generatePasswordDto.IncludeNumbers = true;
     generatePasswordDto.IncludeLowercaseNumbers = true;
     generatePasswordDto.IncludeUppercaseNumbers = true;
@@ -58,7 +63,7 @@ const handleSavedPasswordDelete = (selectedPass:string) => {
 const handleChange = (value:string) =>{
   setPasswordLength(Number(value));
 
-  handleGenerate();
+  //handleGenerate();
 }
 
 const handleCopyToClipboard = () => {
@@ -79,7 +84,7 @@ const handleCopyToClipboard = () => {
         <div className="card-content">
           <div className="media">
             <div className="media-content">
-              <p className="is-size-3">{password}</p>
+              <p className="is-size-4">{password}</p>
             </div>
             <div className="media-right">
               <span className="is-size-3" style={myStyles.iconStyles} onClick={handleCopyToClipboard}>📄</span>
@@ -91,9 +96,27 @@ const handleCopyToClipboard = () => {
           <div className="content has-text-centered">
 
             <div className="field">
-              <input id="passwordLengthSelector" type="range" step={1} min={6} max={40}
+              <input id="passwordLengthSelector" type="range" step={1} min={6} max={40} className="input mr-3"
                 value={passwordLength} onChange={(event) => handleChange(event.currentTarget.value)} />
                 <label htmlFor="passwordLengthSelector" style={{fontSize:'24px', fontWeight:"bold"}}>{passwordLength}</label>
+            </div>
+            <div className="field">
+            <label className="checkbox mr-2">
+              <input type="checkbox" className="mr-1"/>
+              Numbers
+            </label>
+            <label className="checkbox mr-2">
+              <input type="checkbox" className="mr-1"/>
+              Lowercase
+            </label>
+            <label className="checkbox mr-2">
+              <input type="checkbox" className="mr-1"/>
+              Uppercase
+            </label>
+            <label className="checkbox mr-2">
+              <input type="checkbox" className="mr-1"/>
+              Special Chars
+            </label>
             </div>
             <ol className="list is-hoverable">
               {savedPasswords.map((pass, index) => (
