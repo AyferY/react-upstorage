@@ -1,44 +1,20 @@
-function NavBar(){
-    return(
-        <nav className="navbar" role="navigation" aria-label="main navigation">
-  <div className="navbar-brand">
-    <a className="navbar-item" href="https://bulma.io">
-      <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28" />
-    </a>
+import { NavLink } from "react-router-dom";
+import {Container, Menu,Image} from "semantic-ui-react";
 
-    <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-
-  <div id="navbarBasicExample" className="navbar-menu">
-    <div className="navbar-start">
-      <a className="navbar-item">
-        Home
-      </a>
-
-      <a className="navbar-item">
-        Documentation
-      </a>
-      </div>
-
-        <div className="navbar-end">
-        <div className="navbar-item">
-            <div className="buttons">
-            <a className="button is-primary">
-                <strong>Sign up</strong>
-            </a>
-            <a className="button is-light">
-                Log in
-            </a>
-            </div>
-        </div>
-    </div>
-  </div>
-</nav>
+const NavBar = () => {
+    return (
+        <Menu fixed='top' inverted>
+            <Container>
+                <Menu.Item as='a' header>
+                    <Image size='mini' src='/vite.svg' style={{ marginRight: '1.5em' }} />
+                    UpStorage
+                </Menu.Item>
+                <Menu.Item as={NavLink} to="/order">Order</Menu.Item>
+                <Menu.Item as={NavLink} to="/log">Logs</Menu.Item>
+                <Menu.Item as={NavLink} to="/abc">Not Found</Menu.Item>
+            </Container>
+        </Menu>
     );
 }
 
-export default NavBar;
+export default  NavBar;
