@@ -1,11 +1,11 @@
-
+import { ProductCrawlType } from "./ProductCrawlType";
 
 export default class OrderDto{
     public RequestedAmount : number;
-    public TotalFoundAmount : number;
+    public ProductCrawlType : string;
 
     constructor() {
         this.RequestedAmount = 0;
-        this.TotalFoundAmount = 0;
+        this.ProductCrawlType = "";
     }
 }

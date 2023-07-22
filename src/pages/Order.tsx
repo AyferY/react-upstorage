@@ -1,22 +1,48 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import OrderDropDown from "../components/DropDown/OrderDropDown.tsx";
 import {Form, Grid, Header, Input, Segment} from "semantic-ui-react";
+import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
+import OrderDto from '../types/OrderDto.ts';
 
 function Order() {
 
-  const [scrapeCount, setScrapeCount] = useState<string>("")
+  const [orderHubConnection, setOrderHubConnection] = useState<HubConnection | undefined>(undefined);
 
-  const [productType, setProductType] = useState<string>("")
+  useEffect(() =>{
+
+    const startConnection = async () => {
+      const connection = new HubConnectionBuilder()
+        .withUrl("https://localhost:7275/Hubs/UpStorageOrderHub")
+        .withAutomaticReconnect()
+        .build();
+
+      await connection.start();
+
+      setOrderHubConnection(connection);
+    }
+
+    if(!orderHubConnection){
+      startConnection();
+    }
+
+  },[])
+
+  const [order, setOrder] = useState<OrderDto>(new OrderDto());
+
+  const [scrapeCount, setScrapeCount] = useState<string>("");
+
+  const [productType, setProductType] = useState<string>("");
 
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
-    const [selectOption, setSelectOption] = useState<string>("");
-    const cities = () => {
+    const options = () => {
       return ["All", "OnDiscount", "NonDiscount"];
     };
   
     /**
      * Toggle the drop down menu
      */
+  
+
     const toggleDropDown = () => {
       setShowDropDown(!showDropDown);
     };
@@ -37,23 +63,24 @@ function Order() {
      * Callback function to consume the
      * city name from the child component
      *
-     * @param city  The selected city
+     * @param options  The selected city
      */
-    const optionSelection = (option: string): void => {
-      setSelectOption(option);
+    const handleProductType = (option: string): void => {
+      setProductType(option);
     };
 
+/*test için var*/
+  const handleSubmit = async() => {
+    console.log(productType);
 
-  const gonderdim = () => {
-    console.log(scrapeCount);
+    order.RequestedAmount = +scrapeCount;
+    order.ProductCrawlType = productType;
+
+    await orderHubConnection?.invoke<OrderDto>("AddOrderAsync", order);
   };
 
   const handleScrapeCount = (value:string) => {
     setScrapeCount(String(value));
-  };
-
-  const handleProductType = (value:string) => {
-    setProductType(String(value));
   };
 
   return (
@@ -74,18 +101,6 @@ function Order() {
                                     </Form.Field>
                                     <Form.Field>
                                         <label>What products do you want to scraping?</label>
-                                        <Input
-                                            id="productTypeSelector"
-                                            value={productType}
-                                            onChange={(_, data) => handleProductType(data.value)}
-                                        />
-                                        <div className="announcement">
-                                        <div>
-                                          {selectOption
-                                            ? `You selected ${selectOption}`
-                                            : "Select"}
-                                        </div>
-                                      </div>
                                       <button
                                         className={showDropDown ? "active" : undefined}
                                         onClick={(): void => toggleDropDown()}
@@ -93,20 +108,22 @@ function Order() {
                                           dismissHandler(e)
                                         }
                                       >
-                                        <div>{selectOption ? "Select: " + selectOption : "Select ..."} </div>
+                                        
+                                        <div>{productType ? "Select: " + productType : "Select ..."} </div>
                                         {showDropDown && (
                                           <OrderDropDown
-                                            options={cities()}
+                                            options={options()}
                                             showDropDown={false}
                                             toggleDropDown={(): void => toggleDropDown()}
-                                            optionSelection={optionSelection}
+                                            optionSelection={handleProductType}
                                           />
                                         )}
+                                        
                                       </button>
                                     </Form.Field>
 
                                   <br />
-                                  <button>Gönder</button>
+                                  <button onClick={handleSubmit}>Gönder</button>
                                   </Form>
                               </Grid.Column>
                       </Grid>
@@ -114,7 +131,6 @@ function Order() {
     
     </>
   );
-
-}
+                                        }
 
 export default Order

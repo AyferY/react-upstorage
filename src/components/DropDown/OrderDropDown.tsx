@@ -19,8 +19,8 @@ const OrderDropDown: React.FC<DropDownProps> = ({
    *
    * @param city  The selected city
    */
-  const onClickHandler = (city: string): void => {
-    optionSelection(city);
+  const onClickHandler = (options: string): void => {
+    optionSelection(options);
   };
 
   useEffect(() => {
@@ -31,15 +31,15 @@ const OrderDropDown: React.FC<DropDownProps> = ({
     <>
       <div className={showDropDown ? 'dropdown' : 'dropdown active'}>
         {options.map(
-          (city: string, index: number): JSX.Element => {
+          (options: string, index: number): JSX.Element => {
             return (
               <p
                 key={index}
                 onClick={(): void => {
-                  onClickHandler(city);
+                  onClickHandler(options);
                 }}
               >
-                {city}
+                {options}
               </p>
             );
           }
